@@ -395,7 +395,6 @@ async function renderProfile(root) {
     `${posts.data.length} posts · ${followers.data.length} followers · ${followingRows.data.length} following`,
     "muted"));
   root.replaceChildren(box);
-  await renderFeed(root, false);
 }
 async function renderFollowing(root) {
   root.replaceChildren(heading("Following", "Posts from people you follow."));
@@ -522,7 +521,7 @@ $("signup").addEventListener("submit", async e => {
       options:{data:{username}}
     });
     if (error) throw error;
-    if (!data.session) notice("Check your email to confirm your account, then sign in.");
+    if (!data.session) notice("Check your email to confirm your account, & sign in.");
     else notice("Account created!");
   } catch (e) { notice(e.message); }
 });
@@ -537,7 +536,58 @@ $("signin").addEventListener("submit", async e => {
     if (error) throw error;
   } catch (e) { notice(e.message); }
 });
-$("logout").addEventListener("click", async () => {
+
+$("signup").addEventListener("submit", async e => {
+  e.preventDefault();
+
+  if (!configured) {
+    return notice("Supabase setup is missing. Check your project URL and publishable key.");
+  }
+
+  const username = $("su-name").value.trim().toLowerCase();
+  const email = $("su-email").value.trim();
+  const password = $("su-pass").value;
+  const submitButton = $("signup").querySelector("button");
+
+  if (!/^[a-z0-9_]{3,20}$/.test(username)) {
+    return notice("Username must be 3–20 letters, numbers or underscores.");
+  }
+
+  if (password.length < 8) {
+    return notice("Your password must be at least 8 characters.");
+  }
+
+  submitButton.disabled = true;
+  submitButton.textContent = "Creating account...";
+
+  try {
+    notice("Creating your account...");
+
+    const { data, error } = await db.auth.signUp({
+      email,
+      password,
+      options: {
+        data: { username }
+      }
+    });
+
+    if (error) throw error;
+
+    if (data.session) {
+      notice("Account created! Loading Ookwa Social...");
+    } else {
+      notice(
+        "Signup request completed. If email confirmation is enabled, check your inbox and spam folder. If no email arrives, check your Supabase email settings."
+      );
+    }
+  } catch (error) {
+    console.error("Ookwa Social signup failed:", error);
+    notice(error.message || "Signup failed. Please try again.");
+  } finally {
+    submitButton.disabled = false;
+    submitButton.textContent = "Sign up";
+  }
+});
   const {error} = await db.auth.signOut();
   if (error) showError(error);
 });
