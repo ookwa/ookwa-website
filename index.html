@@ -1,628 +1,179 @@
-<!DOCTYPE html>
+from pathlib import Path
+
+html = r'''<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#0b090a">
-<title>Ookwa Social</title>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0a0a0d">
+<title>VOIDHUB — Your next world starts here</title>
 <style>
-:root {
-  color-scheme: dark;
-  --bg:#0b090a; --panel:#151113; --line:#332329;
-  --red:#ef3340; --text:#faf5f6; --muted:#a99ba0;
-}
-* {box-sizing:border-box}
-body {margin:0;background:var(--bg);color:var(--text);
-  font:15px/1.5 Inter,system-ui,Arial,sans-serif}
-button,input,textarea {font:inherit}
-button {cursor:pointer;background:#21181c;color:var(--text);
-  border:1px solid var(--line);border-radius:10px;padding:10px 13px}
-button:hover {border-color:var(--red)}
-button:disabled {opacity:.5;cursor:wait}
-.primary {background:var(--red);color:white;border-color:var(--red);font-weight:750}
-input,textarea {width:100%;padding:12px;background:#0d0a0c;
-  border:1px solid var(--line);border-radius:10px;color:var(--text)}
-textarea {resize:vertical;min-height:90px}
-header {position:sticky;top:0;z-index:5;background:#0b090af0;
-  backdrop-filter:blur(16px);border-bottom:1px solid var(--line);padding:14px 20px}
-.top {max-width:1100px;margin:auto;display:flex;align-items:center;
-  justify-content:space-between;gap:12px}
-.logo {font-size:22px;font-weight:900;letter-spacing:-1px}
-.logo span {color:var(--red)}
-main {max-width:1100px;margin:auto;padding:24px 16px;
-  display:grid;grid-template-columns:205px minmax(0,1fr);gap:20px}
-.panel,.post {background:var(--panel);border:1px solid var(--line);
-  border-radius:15px;padding:17px}
-.sidebar {height:max-content;position:sticky;top:80px}
-.nav {display:grid;gap:8px;margin-top:18px}
-.nav button {text-align:left}
-.nav button.active {background:#38171e;border-color:var(--red)}
-.muted {color:var(--muted);font-size:13px}
-h1,h2,h3,p {margin-top:0}
-h2 {font-size:20px}
-.stack {display:grid;gap:13px}
-.feed {display:grid;gap:13px}
-.posthead {display:flex;align-items:center;gap:10px;margin-bottom:12px}
-.avatar {height:40px;width:40px;flex-shrink:0;border-radius:50%;
-  background:#471923;color:#ffc2c7;display:grid;place-items:center;font-weight:850}
-.username {font-weight:750;overflow-wrap:anywhere}
-.content {white-space:pre-wrap;overflow-wrap:anywhere;margin:12px 0}
-.actions {display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
-.comment {border-top:1px solid var(--line);padding:10px 0}
-.commentform {display:flex;gap:8px;margin-top:10px}
-.commentform input {min-width:0}
-.hidden {display:none!important}
-#auth {max-width:430px;margin:50px auto;padding:22px}
-#notice {overflow-wrap:anywhere}
-#conversation-list {display:grid;gap:7px}
-#conversation-list button {text-align:left}
-#messages {display:grid;gap:10px;max-height:350px;overflow:auto;margin:14px 0}
-.bubble {max-width:85%;padding:10px 12px;border-radius:12px;
-  background:#281b20;overflow-wrap:anywhere;white-space:pre-wrap}
-.bubble.mine {justify-self:end;background:#74212d}
-.small {font-size:12px;color:var(--muted)}
-@media(max-width:700px) {
-  main {grid-template-columns:1fr;padding:12px}
-  .sidebar {position:static}
-  .nav {display:flex;flex-wrap:wrap}
-  .nav button {flex:1}
-  header {padding:12px}
-}
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+:root{--bg:#09090c;--panel:#111116;--panel2:#17171e;--line:rgba(255,255,255,.09);--text:#f5f5f7;--muted:#9a9aa7;--red:#f04452;--red2:#a9152b;--green:#55e6a5}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+body:before{content:"";position:fixed;inset:0;pointer-events:none;z-index:-1;background:radial-gradient(ellipse at 75% 10%,rgba(151,17,42,.18),transparent 35%),linear-gradient(rgba(255,255,255,.018) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.018) 1px,transparent 1px);background-size:auto,42px 42px,42px 42px;mask-image:linear-gradient(to bottom,#000,transparent 85%)}
+a{color:inherit;text-decoration:none}
+button{font:inherit;cursor:pointer}
+.wrap{width:min(1160px,calc(100% - 44px));margin:auto}
+nav{height:76px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line)}
+.brand{display:flex;align-items:center;gap:10px;font-weight:900;letter-spacing:-.8px;font-size:19px}
+.brand-mark{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;background:linear-gradient(145deg,#ff5a67,#a50f28);box-shadow:0 0 25px #ed33452e}
+.brand-mark svg{width:21px}
+.navlinks{display:flex;align-items:center;gap:30px;color:#b5b5c0;font-size:13px}
+.navlinks a:hover{color:#fff}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;border:1px solid var(--line);border-radius:11px;padding:12px 16px;font-size:13px;font-weight:700;transition:.2s}
+.btn:hover{transform:translateY(-2px);filter:brightness(1.12)}
+.btn-primary{background:linear-gradient(135deg,#f04452,#b51b32);border-color:#f0445260;color:#fff;box-shadow:0 8px 26px #f0445221}
+.btn-quiet{background:#ffffff08;color:#e8e8ed}
+.menu{display:none;background:none;border:1px solid var(--line);color:#fff;border-radius:9px;padding:9px}
+.hero{display:grid;grid-template-columns:1.02fr .98fr;align-items:center;gap:35px;padding:75px 0 58px;min-height:480px}
+.eyebrow{display:inline-flex;align-items:center;gap:9px;border:1px solid #f044523c;background:#f044520d;color:#ff7b85;border-radius:99px;padding:8px 12px;font-size:11px;font-weight:800;letter-spacing:1.1px;text-transform:uppercase}
+.pulse{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 12px var(--green)}
+h1{font-size:clamp(40px,5vw,66px);line-height:.99;letter-spacing:-3.5px;font-weight:900;margin:23px 0 18px;max-width:630px}
+h1 span{color:var(--red)}
+.hero-copy{font-size:15px;line-height:1.8;color:var(--muted);max-width:490px}
+.hero-actions{display:flex;gap:11px;flex-wrap:wrap;margin-top:28px}
+.mini-proof{display:flex;align-items:center;gap:11px;margin-top:30px;color:#b1b1bc;font-size:12px}
+.avatars{display:flex;padding-left:4px}
+.avatars i{width:25px;height:25px;border:2px solid var(--bg);border-radius:50%;margin-left:-5px;background:linear-gradient(145deg,#f87171,#7f1d1d)}
+.avatars i:nth-child(2){background:linear-gradient(145deg,#818cf8,#312e81)}.avatars i:nth-child(3){background:linear-gradient(145deg,#4ade80,#166534)}.avatars i:nth-child(4){background:linear-gradient(145deg,#fbbf24,#92400e)}
+.art{position:relative;min-height:365px;display:grid;place-items:center}
+.art-glow{position:absolute;width:310px;height:310px;border-radius:50%;background:#d21d3924;filter:blur(55px)}
+.portal-scene{position:relative;width:min(100%,440px);height:330px;border:1px solid #ffffff17;border-radius:24px;overflow:hidden;background:linear-gradient(145deg,#17171f,#0a0a0e 65%);box-shadow:0 30px 80px #0008}
+.portal-scene:before{content:"";position:absolute;inset:0;background:linear-gradient(transparent 55%,#09090c),linear-gradient(90deg,#fff05 1px,transparent 1px),linear-gradient(#fff05 1px,transparent 1px);background-size:auto,28px 28px,28px 28px;opacity:.35}
+.scene-top{position:absolute;top:17px;left:18px;right:18px;display:flex;justify-content:space-between;align-items:center;font-size:10px;letter-spacing:1px;color:#c8c8d0;font-weight:800}
+.scene-top span:last-child{color:#ff7884}
+.moon{position:absolute;width:65px;height:65px;border-radius:50%;top:56px;right:65px;background:radial-gradient(circle at 35% 30%,#ffb4bb,#8e1b32 65%,#390c19);box-shadow:0 0 45px #f0445245}
+.mountain{position:absolute;bottom:40px;width:0;height:0;border-left:150px solid transparent;border-right:150px solid transparent;border-bottom:200px solid #22222c;filter:drop-shadow(0 0 1px #ffffff25)}
+.m1{left:-65px;bottom:20px;border-left-width:170px;border-right-width:170px;border-bottom-width:150px;border-bottom-color:#171720}
+.m2{right:-80px;bottom:18px;border-left-width:180px;border-right-width:180px;border-bottom-width:170px;border-bottom-color:#24242f}
+.portal{position:absolute;left:50%;top:100px;transform:translateX(-50%);width:105px;height:160px;border:10px solid #29222e;border-bottom-width:13px;background:linear-gradient(90deg,#300a19,#ff405c 45%,#8e102c);box-shadow:0 0 20px #fa284b,0 0 55px #f0445266,inset 0 0 25px #ff8b9a;clip-path:polygon(16% 0,84% 0,100% 12%,100% 100%,0 100%,0 12%)}
+.portal:after{content:"";position:absolute;inset:7px;background:linear-gradient(130deg,#ff8c9b55,transparent 55%,#2c0616aa)}
+.block{position:absolute;background:linear-gradient(145deg,#393944,#181820);border:1px solid #77778338;box-shadow:inset -10px -12px 0 #0003}
+.b1{width:66px;height:45px;bottom:34px;left:63px;transform:skewY(-8deg)}.b2{width:56px;height:56px;bottom:48px;right:53px;transform:skewY(9deg)}.b3{width:35px;height:28px;bottom:87px;right:110px;transform:skewY(-8deg)}
+.scene-caption{position:absolute;bottom:17px;left:18px;right:18px;display:flex;justify-content:space-between;align-items:center;font-size:10px;color:#c8c8d0;letter-spacing:.5px}
+.scene-caption strong{color:#fff;font-size:11px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:0 0 70px}
+.stat{padding:20px 22px;background:linear-gradient(145deg,#15151c,#101015);border:1px solid var(--line);border-radius:15px;display:flex;align-items:center;gap:14px}
+.stat-icon{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:#f0445218;color:#ff6876;font-size:18px}
+.stat strong{display:block;font-size:23px;letter-spacing:-.7px}.stat small{display:block;color:var(--muted);font-size:11px;margin-top:4px}
+.section-head{display:flex;align-items:end;justify-content:space-between;gap:20px;margin-bottom:20px}
+.section-head h2{font-size:24px;letter-spacing:-1px}.section-head p{color:var(--muted);font-size:12px;margin-top:7px}
+.content-grid{display:grid;grid-template-columns:1.35fr .85fr;gap:16px;margin-bottom:70px}
+.server-card,.leader-card{background:linear-gradient(145deg,#15151c,#101015);border:1px solid var(--line);border-radius:17px;padding:23px}
+.server-top{display:flex;align-items:center;gap:14px}
+.server-icon{width:54px;height:54px;border-radius:15px;display:grid;place-items:center;background:linear-gradient(145deg,#f04452,#671329);font-size:24px;box-shadow:0 7px 25px #f0445225}
+.server-title{font-size:17px;font-weight:800;letter-spacing:-.4px}.server-sub{color:var(--muted);font-size:12px;margin-top:5px}
+.tags{display:flex;gap:6px;margin-left:auto;flex-wrap:wrap}.tag{font-size:9px;font-weight:800;letter-spacing:.7px;border:1px solid var(--line);border-radius:6px;padding:6px 7px;color:#bdbdc8}.tag.red{color:#ff7b85;border-color:#f0445240;background:#f044520c}
+.server-description{color:#aaaab7;font-size:12px;line-height:1.8;margin:22px 0}
+.server-footer{display:flex;align-items:center;justify-content:space-between;gap:15px;border-top:1px solid var(--line);padding-top:17px}
+.online{display:flex;align-items:center;gap:8px;font-size:11px;color:#bdbdc8}.online .pulse{width:6px;height:6px}
+.players{font-size:11px;color:var(--muted)}.players strong{color:#fff}
+.leader-card h3{font-size:15px;letter-spacing:-.3px}.leader-card>p{color:var(--muted);font-size:11px;margin-top:6px;margin-bottom:18px}
+.player{display:flex;align-items:center;gap:10px;padding:11px 0;border-bottom:1px solid #ffffff0a}.player:last-child{border-bottom:0}
+.rank{width:25px;color:#8e8e9a;font-size:12px;font-weight:800}.rank.gold{color:#f7c75e}.rank.silver{color:#c7c9d4}.rank.bronze{color:#d99b73}
+.player-avatar{width:32px;height:32px;border-radius:9px;background:linear-gradient(145deg,#6d28d9,#312e81);display:grid;place-items:center;font-size:12px;font-weight:800}.player:nth-of-type(3) .player-avatar{background:linear-gradient(145deg,#0f766e,#164e63)}.player:nth-of-type(4) .player-avatar{background:linear-gradient(145deg,#b45309,#7c2d12)}
+.player-info{flex:1}.player-info strong{font-size:11px;display:block}.player-info small{font-size:10px;color:var(--muted);display:block;margin-top:3px}.score{font-size:11px;font-weight:800;color:#ff7b85}
+.community{margin-bottom:65px;border:1px solid #f0445230;border-radius:20px;padding:32px;display:flex;align-items:center;justify-content:space-between;gap:25px;background:radial-gradient(ellipse at 100% 0%,#9f12391f,transparent 55%),#111116}
+.community h2{font-size:24px;letter-spacing:-1px}.community p{font-size:12px;color:var(--muted);line-height:1.7;margin-top:9px;max-width:540px}
+footer{border-top:1px solid var(--line);padding:23px 0 30px;color:#777783;font-size:11px;display:flex;justify-content:space-between;gap:15px}
+.toast{position:fixed;bottom:22px;left:50%;transform:translate(-50%,20px);background:#1b1b22;border:1px solid #ffffff20;padding:12px 16px;border-radius:11px;font-size:12px;opacity:0;pointer-events:none;transition:.25s;box-shadow:0 10px 30px #0008}.toast.show{opacity:1;transform:translate(-50%,0)}
+@media(max-width:850px){.navlinks{gap:15px}.hero{grid-template-columns:1fr;padding-top:55px}.art{min-height:310px}.portal-scene{height:300px}.content-grid{grid-template-columns:1fr}.stats{margin-bottom:55px}}
+@media(max-width:600px){.wrap{width:min(100% - 28px,1160px)}nav{height:66px}.navlinks{display:none;position:absolute;top:65px;left:14px;right:14px;padding:17px;background:#15151b;border:1px solid var(--line);border-radius:13px;z-index:10;flex-direction:column;align-items:stretch}.navlinks.open{display:flex}.menu{display:block}.nav-cta{display:none}.hero{padding:44px 0 35px;gap:10px;min-height:auto}h1{font-size:45px;letter-spacing:-2.7px}.hero-copy{font-size:13px}.art{min-height:275px}.portal-scene{height:260px}.portal{top:80px;height:130px;width:88px}.moon{width:50px;height:50px}.mountain{bottom:15px}.stats{grid-template-columns:1fr;gap:9px;margin-bottom:48px}.stat{padding:15px}.stat strong{font-size:20px}.section-head{align-items:start;flex-direction:column}.server-card,.leader-card{padding:17px}.server-top{flex-wrap:wrap}.tags{margin-left:0;width:100%}.server-footer{align-items:flex-start;flex-direction:column}.community{padding:24px;align-items:flex-start;flex-direction:column}.community h2{font-size:22px}footer{flex-direction:column}}
 </style>
 </head>
 <body>
-<header>
-  <div class="top">
-    <div class="logo">ookwa<span> social.</span></div>
-    <span id="top-user" class="muted">Not signed in</span>
-    <button id="logout" class="hidden">Log out</button>
-  </div>
-</header>
-
-<section id="auth" class="panel">
-  <h1>Welcome to Ookwa.</h1>
-  <p class="muted">Your people. Your posts. Your community.</p>
-  <div id="notice" class="panel hidden" role="status"></div>
-  <form id="signup" class="stack">
-    <h3>Create an account</h3>
-    <input id="su-name" placeholder="Username (3–20 characters)"
-      minlength="3" maxlength="20" pattern="[A-Za-z0-9_]+"
-      autocomplete="username" required>
-    <input id="su-email" type="email" placeholder="Email" required>
-    <input id="su-pass" type="password" minlength="8"
-      autocomplete="new-password" placeholder="Password (8+ characters)" required>
-    <button class="primary">Sign up</button>
-  </form>
-  <hr style="border-color:var(--line);margin:24px 0">
-  <form id="signin" class="stack">
-    <h3>Sign in</h3>
-    <input id="li-email" type="email" autocomplete="email"
-      placeholder="Email" required>
-    <input id="li-pass" type="password" autocomplete="current-password"
-      placeholder="Password" required>
-    <button>Log in</button>
-  </form>
-</section>
-
-<main id="app" class="hidden">
-  <aside class="panel sidebar">
-    <div class="avatar" id="my-avatar">O</div>
-    <h3 id="my-name" style="margin-top:10px">My profile</h3>
-    <p class="muted">Welcome to your community.</p>
-    <div class="nav">
-      <button data-page="feed" class="active">⌂ Feed</button>
-      <button data-page="profile">◉ Profile</button>
-      <button data-page="following">♡ Following</button>
-      <button data-page="messages">✉ Messages</button>
+<div class="wrap">
+  <nav>
+    <a class="brand" href="#home" aria-label="Voidhub home">
+      <span class="brand-mark"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linejoin="round"><path d="M12 2 21 7v10l-9 5-9-5V7z"/><path d="m3 7 9 5 9-5M12 12v10"/></svg></span>
+      VOIDHUB
+    </a>
+    <div class="navlinks" id="navlinks">
+      <a href="#home">Home</a><a href="#servers">Servers</a><a href="#leaderboard">Leaderboard</a><a href="#community">Community</a>
     </div>
-  </aside>
+    <div style="display:flex;align-items:center;gap:10px">
+      <a class="btn btn-primary nav-cta" href="#community">Join Discord ↗</a>
+      <button class="menu" id="menu" aria-label="Toggle navigation">☰</button>
+    </div>
+  </nav>
 
-  <section id="page" class="stack"></section>
-</main>
+  <main id="home">
+    <section class="hero">
+      <div>
+        <div class="eyebrow"><span class="pulse"></span> A COMMUNITY BUILT DIFFERENT</div>
+        <h1>YOUR NEXT<br><span>WORLD</span> STARTS HERE.</h1>
+        <p class="hero-copy">Find your next adventure. Discover survival servers, meet your future teammates, and build something legendary with a community that gets it.</p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="#servers">Explore servers <span>↗</span></a>
+          <a class="btn btn-quiet" href="#community">Meet the community</a>
+        </div>
+        <div class="mini-proof"><div class="avatars"><i></i><i></i><i></i><i></i></div><span><strong style="color:#fff">2,400+</strong> players found their people</span></div>
+      </div>
+      <div class="art" aria-label="Stylized red portal scene">
+        <div class="art-glow"></div>
+        <div class="portal-scene">
+          <div class="scene-top"><span>VOIDHUB / REALMS</span><span>● LIVE WORLD</span></div>
+          <div class="moon"></div><div class="mountain m1"></div><div class="mountain"></div><div class="mountain m2"></div>
+          <div class="portal"></div><div class="block b1"></div><div class="block b2"></div><div class="block b3"></div>
+          <div class="scene-caption"><strong>THE VOID IS CALLING</strong><span>EXPLORE THE UNKNOWN →</span></div>
+        </div>
+      </div>
+    </section>
 
+    <section class="stats" aria-label="Community statistics">
+      <div class="stat"><div class="stat-icon">♟</div><div><strong>2,481</strong><small>Players online</small></div></div>
+      <div class="stat"><div class="stat-icon">▦</div><div><strong>36</strong><small>Active servers</small></div></div>
+      <div class="stat"><div class="stat-icon">✦</div><div><strong>12</strong><small>Events this week</small></div></div>
+    </section>
+
+    <section id="servers">
+      <div class="section-head"><div><h2>Featured worlds</h2><p>Pick a world. Make it yours.</p></div><a class="btn btn-quiet" href="#community">Browse all servers ↗</a></div>
+      <div class="content-grid">
+        <article class="server-card">
+          <div class="server-top">
+            <div class="server-icon">⛏</div>
+            <div><div class="server-title">RUNE SMP</div><div class="server-sub">Survive · Build · Dominate</div></div>
+            <div class="tags"><span class="tag red">FEATURED</span><span class="tag">JAVA</span><span class="tag">BEDROCK</span></div>
+          </div>
+          <p class="server-description">A fresh world for builders, grinders, explorers, and friends. Start from nothing, make your mark, and write your own story.</p>
+          <div class="server-footer">
+            <div><div class="online"><span class="pulse"></span> Server status: Online</div><div class="players" style="margin-top:8px">Players: <strong>128 / 200</strong></div></div>
+            <button class="btn btn-primary" id="server-btn">View server ↗</button>
+          </div>
+        </article>
+        <article class="leader-card" id="leaderboard">
+          <h3>Community leaderboard</h3><p>This week's top adventurers</p>
+          <div class="player"><span class="rank gold">01</span><div class="player-avatar">N</div><div class="player-info"><strong>NetherNova</strong><small>Builder · Level 82</small></div><span class="score">9,840 XP</span></div>
+          <div class="player"><span class="rank silver">02</span><div class="player-avatar">V</div><div class="player-info"><strong>VoidWalker</strong><small>Explorer · Level 76</small></div><span class="score">8,620 XP</span></div>
+          <div class="player"><span class="rank bronze">03</span><div class="player-avatar">C</div><div class="player-info"><strong>CrimsonFox</strong><small>Fighter · Level 71</small></div><span class="score">7,950 XP</span></div>
+        </article>
+      </div>
+    </section>
+
+    <section class="community" id="community">
+      <div><h2>Your next squad is waiting.</h2><p>Join the conversation, share your builds, find a server, and be part of a community that keeps creating. Your next adventure starts with one click.</p></div>
+      <a class="btn btn-primary" href="https://discord.com/" target="_blank" rel="noopener noreferrer">Join the Discord ↗</a>
+    </section>
+  </main>
+  <footer><span>© 2026 VOIDHUB. Built for the ones who never log off.</span><span>Survive the night. Own the world.</span></footer>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
 <script>
-/* Replace these two placeholders with your own Supabase values. */
-const SUPABASE_URL = "https://xnqzetzrvhzhxjllsaru.supabase.co";
-const SUPABASE_KEY = "sb_publishable_O1HALKKAVHyodKB1dZy19g_ka43iIhW";
-
-const configured = SUPABASE_URL.startsWith("https://")
-  && !SUPABASE_URL.includes("YOUR_")
-  && !SUPABASE_KEY.includes("YOUR_");
-
-const db = configured
-  ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY)
-  : null;
-
-const $ = id => document.getElementById(id);
-let user = null, profile = null, page = "feed";
-let following = new Set(), activeConversation = null;
-let conversationUsers = new Map();
-
-function el(tag, text, cls) {
-  const n = document.createElement(tag);
-  if (text !== undefined) n.textContent = text;
-  if (cls) n.className = cls;
-  return n;
-}
-function button(text, fn, cls = "") {
-  const b = el("button", text, cls);
-  b.type = "button";
-  b.addEventListener("click", fn);
-  return b;
-}
-function field(placeholder, value = "") {
-  const n = document.createElement("input");
-  n.placeholder = placeholder;
-  n.value = value;
-  return n;
-}
-function area(placeholder, value = "") {
-  const n = el("textarea");
-  n.placeholder = placeholder;
-  n.value = value;
-  return n;
-}
-function form(...children) {
-  const f = el("form", undefined, "stack");
-  children.forEach(n => f.append(n));
-  return f;
-}
-function notice(message) {
-  $("notice").textContent = message;
-  $("notice").classList.remove("hidden");
-}
-function showError(error) {
-  console.error(error);
-  alert(error.message || "Something went wrong.");
-}
-function heading(text, description) {
-  const box = el("div");
-  box.append(el("h2", text));
-  if (description) box.append(el("p", description, "muted"));
-  return box;
-}
-function avatar(name) {
-  return el("div", (name || "?")[0].toUpperCase(), "avatar");
-}
-function switchPage(next) {
-  page = next;
-  activeConversation = null;
-  document.querySelectorAll("[data-page]").forEach(b =>
-    b.classList.toggle("active", b.dataset.page === next));
-  renderPage();
-}
-async function loadProfile() {
-  const { data, error } = await db.from("profiles")
-    .select("*").eq("id", user.id).single();
-  if (error) throw error;
-  profile = data;
-  $("my-name").textContent = "@" + profile.username;
-  $("my-avatar").textContent = profile.username[0].toUpperCase();
-  $("top-user").textContent = "@" + profile.username;
-}
-async function loadFollowing() {
-  const { data, error } = await db.from("follows")
-    .select("following_id").eq("follower_id", user.id);
-  if (error) throw error;
-  following = new Set(data.map(x => x.following_id));
-}
-async function renderPage() {
-  const root = $("page");
-  root.replaceChildren(el("div", "Loading...", "panel"));
-  try {
-    if (page === "feed") await renderFeed(root, false);
-    if (page === "profile") await renderProfile(root);
-    if (page === "following") await renderFollowing(root);
-    if (page === "messages") await renderMessages(root);
-  } catch (e) {
-    root.replaceChildren(el("div", e.message, "panel"));
-  }
-}
-async function renderFeed(root, onlyFollowing) {
-  const composer = el("section", undefined, "panel stack");
-  composer.append(heading("What's happening?", "Share an update with your community."));
-  const f = form();
-  const content = area("Write a post... (up to 1000 characters)");
-  content.maxLength = 1000;
-  const publish = el("button", "Publish post", "primary");
-  f.append(content, publish);
-  f.addEventListener("submit", async e => {
-    e.preventDefault();
-    if (!content.value.trim()) return;
-    publish.disabled = true;
-    try {
-      const { error } = await db.from("posts").insert({
-        user_id: user.id, content: content.value.trim()
-      });
-      if (error) throw error;
-      await renderPage();
-    } catch (e) { showError(e); }
-    finally { publish.disabled = false; }
-  });
-  composer.append(f);
-  root.replaceChildren(composer);
-
-  const { data: posts, error } = await db.from("posts")
-    .select("id,user_id,content,created_at,profiles(username,bio)")
-    .order("created_at", { ascending: false }).limit(50);
-  if (error) throw error;
-
-  const ids = (posts || []).map(p => p.id);
-  let likes = [], comments = [];
-  if (ids.length) {
-    const a = await db.from("likes").select("post_id,user_id").in("post_id", ids);
-    if (a.error) throw a.error;
-    likes = a.data;
-    const c = await db.from("comments")
-      .select("id,post_id,user_id,content,created_at,profiles(username)")
-      .in("post_id", ids).order("created_at");
-    if (c.error) throw c.error;
-    comments = c.data;
-  }
-
-  const filtered = onlyFollowing
-    ? posts.filter(p => following.has(p.user_id) || p.user_id === user.id)
-    : posts;
-
-  if (!filtered.length) {
-    root.append(el("div", onlyFollowing
-      ? "No posts from people you follow yet."
-      : "No posts yet. Be the first to publish!", "panel"));
-    return;
-  }
-
-  for (const p of filtered) {
-    const author = p.profiles?.username || "member";
-    const card = el("article", undefined, "post");
-    const head = el("div", undefined, "posthead");
-    head.append(avatar(author));
-    const info = el("div");
-    info.append(el("div", "@" + author, "username"),
-      el("div", new Date(p.created_at).toLocaleString(), "small"));
-    head.append(info);
-    card.append(head, el("div", p.content, "content"));
-
-    const actions = el("div", undefined, "actions");
-    const postLikes = likes.filter(x => x.post_id === p.id);
-    const liked = postLikes.some(x => x.user_id === user.id);
-    actions.append(button((liked ? "♥" : "♡") +
-      " Like · " + postLikes.length, async () => {
-      try {
-        const result = liked
-          ? await db.from("likes").delete().eq("post_id", p.id).eq("user_id", user.id)
-          : await db.from("likes").insert({post_id:p.id,user_id:user.id});
-        if (result.error) throw result.error;
-        await renderPage();
-      } catch (e) { showError(e); }
-    }));
-
-    if (p.user_id !== user.id) {
-      actions.append(button(following.has(p.user_id) ? "Following ✓" : "+ Follow",
-        async () => {
-          try {
-            const result = following.has(p.user_id)
-              ? await db.from("follows").delete()
-                  .eq("follower_id", user.id).eq("following_id", p.user_id)
-              : await db.from("follows").insert({
-                  follower_id: user.id, following_id: p.user_id
-                });
-            if (result.error) throw result.error;
-            await loadFollowing();
-            await renderPage();
-          } catch (e) { showError(e); }
-        }));
-      actions.append(button("Message", () => startConversation(p.user_id)));
-    } else {
-      actions.append(button("Delete post", async () => {
-        if (!confirm("Delete this post?")) return;
-        const { error } = await db.from("posts").delete().eq("id", p.id);
-        if (error) showError(error); else await renderPage();
-      }));
-    }
-    card.append(actions);
-
-    const commentList = el("div");
-    for (const c of comments.filter(x => x.post_id === p.id)) {
-      const row = el("div", undefined, "comment");
-      row.append(el("b", "@" + (c.profiles?.username || "member") + " "));
-      row.append(document.createTextNode(c.content));
-      if (c.user_id === user.id) {
-        row.append(document.createTextNode(" "));
-        row.append(button("Delete", async () => {
-          const { error } = await db.from("comments").delete().eq("id", c.id);
-          if (error) showError(error); else await renderPage();
-        }));
-      }
-      commentList.append(row);
-    }
-    const cf = el("form", undefined, "commentform");
-    const ci = field("Write a comment...");
-    ci.maxLength = 500;
-    const cb = el("button", "Send", "primary");
-    cf.append(ci, cb);
-    cf.addEventListener("submit", async e => {
-      e.preventDefault();
-      if (!ci.value.trim()) return;
-      cb.disabled = true;
-      try {
-        const { error } = await db.from("comments").insert({
-          post_id: p.id, user_id: user.id, content: ci.value.trim()
-        });
-        if (error) throw error;
-        await renderPage();
-      } catch (e) { showError(e); }
-      finally { cb.disabled = false; }
-    });
-    card.append(el("h3", "Comments"), commentList, cf);
-    root.append(card);
-  }
-}
-async function renderProfile(root) {
-  const box = el("section", undefined, "panel stack");
-  box.append(heading("Your profile", "Edit how people see you."));
-  const name = field("Username", profile.username);
-  name.minLength = 3; name.maxLength = 20;
-  const bio = area("Tell people about yourself...", profile.bio || "");
-  bio.maxLength = 250;
-  const save = el("button", "Save profile", "primary");
-  const f = form(name, bio, save);
-  f.addEventListener("submit", async e => {
-    e.preventDefault();
-    const username = name.value.trim().toLowerCase();
-    if (!/^[a-z0-9_]{3,20}$/.test(username)) {
-      alert("Use 3–20 letters, numbers, or underscores."); return;
-    }
-    save.disabled = true;
-    try {
-      const { error } = await db.from("profiles")
-        .update({username, bio:bio.value.trim()}).eq("id", user.id);
-      if (error) throw error;
-      await loadProfile();
-      alert("Profile saved!");
-      await renderPage();
-    } catch (e) { showError(e); }
-    finally { save.disabled = false; }
-  });
-  box.append(f);
-  const [followers, followingRows, posts] = await Promise.all([
-    db.from("follows").select("follower_id").eq("following_id", user.id),
-    db.from("follows").select("following_id").eq("follower_id", user.id),
-    db.from("posts").select("id").eq("user_id", user.id)
-  ]);
-  for (const r of [followers, followingRows, posts]) if (r.error) throw r.error;
-  box.append(el("p",
-    `${posts.data.length} posts · ${followers.data.length} followers · ${followingRows.data.length} following`,
-    "muted"));
-  root.replaceChildren(box);
-}
-async function renderFollowing(root) {
-  root.replaceChildren(heading("Following", "Posts from people you follow."));
-  await renderFeed(root, true);
-}
-async function startConversation(otherId) {
-  if (otherId === user.id) return;
-  try {
-    const {data: existing, error: findError} = await db.from("conversations")
-      .select("*").or(
-        `and(user1_id.eq.${user.id},user2_id.eq.${otherId}),and(user1_id.eq.${otherId},user2_id.eq.${user.id})`
-      ).limit(1);
-    if (findError) throw findError;
-    let conversation = existing[0];
-    if (!conversation) {
-      const {data, error} = await db.from("conversations").insert({
-        user1_id:user.id,user2_id:otherId
-      }).select().single();
-      if (error) throw error;
-      conversation = data;
-    }
-    activeConversation = conversation.id;
-    conversationUsers.set(conversation.id, otherId);
-    switchPage("messages");
-  } catch (e) { showError(e); }
-}
-async function renderMessages(root) {
-  const wrap = el("div", undefined, "stack");
-  wrap.append(heading("Direct messages", "Private messages between your account and another user."));
-  const searchForm = el("form", undefined, "commentform");
-  const search = field("Find someone by exact username");
-  const find = el("button", "Find user", "primary");
-  searchForm.append(search, find);
-  const result = el("div", undefined, "stack");
-  searchForm.addEventListener("submit", async e => {
-    e.preventDefault();
-    const term = search.value.trim().toLowerCase();
-    if (!term) return;
-    const {data, error} = await db.from("profiles")
-      .select("id,username").eq("username", term).limit(1);
-    if (error) return showError(error);
-    result.replaceChildren();
-    if (!data.length) result.append(el("p", "No user found.", "muted"));
-    else if (data[0].id === user.id) result.append(el("p", "That's your own username.", "muted"));
-    else result.append(el("div", undefined, "panel"),
-      button("Message @" + data[0].username, () => startConversation(data[0].id)));
-  });
-  wrap.append(searchForm, result);
-  const list = el("div", undefined, "panel stack");
-  list.append(el("h3", "Your conversations"));
-  const {data: conversations, error} = await db.from("conversations")
-    .select("*").or(`user1_id.eq.${user.id},user2_id.eq.${user.id}`)
-    .order("created_at", {ascending:false});
-  if (error) throw error;
-  for (const c of conversations) {
-    const other = c.user1_id === user.id ? c.user2_id : c.user1_id;
-    let name = "Conversation";
-    const cached = conversationUsers.get(c.id);
-    if (cached) {
-      const {data} = await db.from("profiles").select("username").eq("id", cached).maybeSingle();
-      if (data) name = "@" + data.username;
-    } else {
-      const {data} = await db.from("profiles").select("username").eq("id", other).maybeSingle();
-      if (data) name = "@" + data.username;
-    }
-    list.append(button(name, () => {
-      activeConversation = c.id;
-      conversationUsers.set(c.id, other);
-      renderPage();
-    }));
-  }
-  wrap.append(list);
-  if (activeConversation) {
-    const chat = el("section", undefined, "panel stack");
-    chat.append(heading("Chat", "Only participants can read messages."));
-    const messages = el("div", undefined, "stack");
-    messages.id = "messages";
-    const {data: rows, error: msgError} = await db.from("messages")
-      .select("*").eq("conversation_id", activeConversation)
-      .order("created_at").limit(100);
-    if (msgError) throw msgError;
-    for (const m of rows) {
-      const bubble = el("div", m.content, "bubble" + (m.sender_id === user.id ? " mine" : ""));
-      bubble.append(el("div", new Date(m.created_at).toLocaleString(), "small"));
-      messages.append(bubble);
-    }
-    chat.append(messages);
-    const mf = el("form", undefined, "commentform");
-    const input = field("Write a private message...");
-    input.maxLength = 2000;
-    const send = el("button", "Send", "primary");
-    mf.append(input, send);
-    mf.addEventListener("submit", async e => {
-      e.preventDefault();
-      if (!input.value.trim()) return;
-      send.disabled = true;
-      try {
-        const {error} = await db.from("messages").insert({
-          conversation_id:activeConversation,
-          sender_id:user.id,
-          content:input.value.trim()
-        });
-        if (error) throw error;
-        await renderPage();
-      } catch (e) { showError(e); }
-      finally { send.disabled = false; }
-    });
-    chat.append(mf);
-    wrap.append(chat);
-  }
-  root.replaceChildren(wrap);
-}
-
-$("signup").addEventListener("submit", async e => {
-  e.preventDefault();
-  if (!configured) return notice("Add your Supabase URL and publishable key to the code first.");
-  const username = $("su-name").value.trim().toLowerCase();
-  if (!/^[a-z0-9_]{3,20}$/.test(username))
-    return notice("Username must be 3–20 letters, numbers or underscores.");
-  try {
-    const {data, error} = await db.auth.signUp({
-      email:$("su-email").value.trim(),
-      password:$("su-pass").value,
-      options:{data:{username}}
-    });
-    if (error) throw error;
-    if (!data.session) notice("Check your email to confirm your account, & sign in.");
-    else notice("Account created!");
-  } catch (e) { notice(e.message); }
-});
-$("signin").addEventListener("submit", async e => {
-  e.preventDefault();
-  if (!configured) return notice("Add your Supabase URL and publishable key to the code first.");
-  try {
-    const {error} = await db.auth.signInWithPassword({
-      email:$("li-email").value.trim(),
-      password:$("li-pass").value
-    });
-    if (error) throw error;
-  } catch (e) { notice(e.message); }
-});
-
-$("signup").addEventListener("submit", async e => {
-  e.preventDefault();
-
-  if (!configured) {
-    return notice("Supabase setup is missing. Check your project URL and publishable key.");
-  }
-
-  const username = $("su-name").value.trim().toLowerCase();
-  const email = $("su-email").value.trim();
-  const password = $("su-pass").value;
-  const submitButton = $("signup").querySelector("button");
-
-  if (!/^[a-z0-9_]{3,20}$/.test(username)) {
-    return notice("Username must be 3–20 letters, numbers or underscores.");
-  }
-
-  if (password.length < 8) {
-    return notice("Your password must be at least 8 characters.");
-  }
-
-  submitButton.disabled = true;
-  submitButton.textContent = "Creating account...";
-
-  try {
-    notice("Creating your account...");
-
-    const { data, error } = await db.auth.signUp({
-      email,
-      password,
-      options: {
-        data: { username }
-      }
-    });
-
-    if (error) throw error;
-
-    if (data.session) {
-      notice("Account created! Loading Ookwa Social...");
-    } else {
-      notice(
-        "Signup request completed. If email confirmation is enabled, check your inbox and spam folder. If no email arrives, check your Supabase email settings."
-      );
-    }
-  } catch (error) {
-    console.error("Ookwa Social signup failed:", error);
-    notice(error.message || "Signup failed. Please try again.");
-  } finally {
-    submitButton.disabled = false;
-    submitButton.textContent = "Sign up";
-  }
-});
-  const {error} = await db.auth.signOut();
-  if (error) showError(error);
-});
-document.querySelectorAll("[data-page]").forEach(b =>
-  b.addEventListener("click", () => switchPage(b.dataset.page)));
-
-async function boot() {
-  if (!configured) {
-    notice("Setup required: add your Supabase project URL and publishable key.");
-    return;
-  }
-  const {data, error} = await db.auth.getSession();
-  if (error) showError(error);
-  await setSession(data.session);
-  db.auth.onAuthStateChange((_event, session) => {
-    setTimeout(() => setSession(session), 0);
-  });
-}
-async function setSession(session) {
-  user = session?.user || null;
-  $("auth").classList.toggle("hidden", !!user);
-  $("app").classList.toggle("hidden", !user);
-  $("logout").classList.toggle("hidden", !user);
-  if (!user) {
-    profile = null;
-    $("top-user").textContent = "Not signed in";
-    return;
-  }
-  try {
-    await loadProfile();
-    await loadFollowing();
-    await renderPage();
-  } catch (e) { showError(e); }
-}
-boot();
+const menu = document.getElementById('menu');
+const navlinks = document.getElementById('navlinks');
+menu.addEventListener('click', () => navlinks.classList.toggle('open'));
+navlinks.querySelectorAll('a').forEach(link => link.addEventListener('click', () => navlinks.classList.remove('open')));
+const toast = document.getElementById('toast');
+let toastTimer;
+function showToast(message){toast.textContent=message;toast.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>toast.classList.remove('show'),2600)}
+document.getElementById('server-btn').addEventListener('click',()=>showToast('Add your Minecraft server IP or server details here.'));
+document.querySelectorAll('a[href="#community"]').forEach(link=>link.addEventListener('click',()=>{}));
 </script>
 </body>
-</html>
+</html>'''
+path = Path("/mnt/data/voidhub.html")
+path.write_text(html, encoding="utf-8")
+print(f"Created {path} ({path.stat().st_size:,} bytes)")
